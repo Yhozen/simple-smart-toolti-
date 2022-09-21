@@ -7,7 +7,8 @@
   "module": "dist/module.js",
   "scripts": {
     "watch": "parcel watch",
-    "build": "parcel build"
+    "build": "parcel build",
+    "prepublish": "npm build"
   },
   "devDependencies": {
     "@babel/core": "^7.19.1",
@@ -27,5 +28,20 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
+  ],
+  "modern": "dist/modern.js",
+  "legacy": "dist/legacy.js",
+  "targets": {
+    "modern": {
+      "engines": {
+        "browsers": "Chrome 80"
+      },
+      "optimize": true
+    },
+    "legacy": {
+      "engines": {
+        "browsers": "> 0.5%, last 2 versions, not dead"
+      }
+    }
+  }
 }
