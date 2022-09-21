@@ -16,6 +16,8 @@ export class SimpleGreeting extends LitElement {
       color: blue;
     }
     #tooltip {
+      display: none;
+
       position: absolute;
       top: 0;
       left: 0;
@@ -51,41 +53,60 @@ export class SimpleGreeting extends LitElement {
     const tooltip = this.renderRoot.querySelector("#tooltip") as HTMLElement;
     const arrowElement = this.renderRoot.querySelector("#arrow") as HTMLElement;
 
-    computePosition(button, tooltip, {
-      placement: this.placement,
-      middleware: [
-        offset(6),
+    const update = () => {
+      computePosition(button, tooltip, {
+        placement: this.placement,
+        middleware: [
+          offset(6),
+          flip(),
+          shift({ padding: 5 }),
+          arrow({ element: arrowElement }),
+        ],
+      }).then(({ x, y, middlewareData }) => {
+        Object.assign(tooltip.style, {
+          left: `${x}px`,
+          top: `${y}px`,
+        });
 
-        flip(),
-        shift({ padding: 5 }),
-        arrow({ element: arrowElement }),
-      ],
-    }).then(({ x, y, middlewareData }) => {
-      Object.assign(tooltip.style, {
-        left: `${x}px`,
-        top: `${y}px`,
+        // Accessing the data
+        const { x: arrowX, y: arrowY } = middlewareData.arrow;
+
+        const staticSide = {
+          top: "bottom",
+          right: "left",
+          bottom: "top",
+          left: "right",
+        }[this.placement.split("-")[0]];
+
+        Object.assign(arrowElement.style, {
+          left: arrowX != null ? `${arrowX}px` : "",
+          top: arrowY != null ? `${arrowY}px` : "",
+          right: "",
+          bottom: "",
+          [staticSide]: "-4px",
+        });
       });
-
-      // Accessing the data
-      const { x: arrowX, y: arrowY } = middlewareData.arrow;
-
-      const staticSide = {
-        top: "bottom",
-        right: "left",
-        bottom: "top",
-        left: "right",
-      }[this.placement.split("-")[0]];
-
-      Object.assign(arrowElement.style, {
-        left: arrowX != null ? `${arrowX}px` : "",
-        top: arrowY != null ? `${arrowY}px` : "",
-        right: "",
-        bottom: "",
-        [staticSide]: "-4px",
-      });
-    });
-
+    };
     console.log({ tooltip });
+    function showTooltip() {
+      tooltip.style.display = "block";
+      update();
+    }
+
+    function hideTooltip() {
+      tooltip.style.display = "";
+    }
+
+    (
+      [
+        ["mouseenter", showTooltip],
+        ["mouseleave", hideTooltip],
+        ["focus", showTooltip],
+        ["blur", hideTooltip],
+      ] as const
+    ).forEach(([event, listener]) => {
+      button.addEventListener(event, listener);
+    });
   }
 
   render() {
