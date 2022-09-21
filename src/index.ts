@@ -48,7 +48,7 @@ export class SimpleGreeting extends LitElement {
   @property()
   placement: Placement = "top";
 
-  firstUpdated() {
+  updated() {
     const button = this.renderRoot.querySelector("#button");
     const tooltip = this.renderRoot.querySelector("#tooltip") as HTMLElement;
     const arrowElement = this.renderRoot.querySelector("#arrow") as HTMLElement;
@@ -62,7 +62,7 @@ export class SimpleGreeting extends LitElement {
           shift({ padding: 5 }),
           arrow({ element: arrowElement }),
         ],
-      }).then(({ x, y, middlewareData }) => {
+      }).then(({ x, y, middlewareData, placement }) => {
         Object.assign(tooltip.style, {
           left: `${x}px`,
           top: `${y}px`,
@@ -76,7 +76,7 @@ export class SimpleGreeting extends LitElement {
           right: "left",
           bottom: "top",
           left: "right",
-        }[this.placement.split("-")[0]];
+        }[placement.split("-")[0]];
 
         Object.assign(arrowElement.style, {
           left: arrowX != null ? `${arrowX}px` : "",
@@ -110,13 +110,16 @@ export class SimpleGreeting extends LitElement {
   }
 
   render() {
-    return html` <div id="first">
-      <p>Hello, ${this.name}!</p>
-      <button id="button" aria-describedby="tooltip">My button</button>
-      <div id="tooltip" role="tooltip">
-        My tooltip
-        <div id="arrow"></div>
+    return html`
+      <div id="content">
+        <button id="button">I am fallback content</button>
+        <div>
+          <div id="tooltip" role="tooltip">
+            My tooltip
+            <div id="arrow"></div>
+          </div>
+        </div>
       </div>
-    </div>`;
+    `;
   }
 }
