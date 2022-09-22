@@ -48,8 +48,10 @@ export class SimpleGreeting extends LitElement {
   @property()
   placement: Placement = "top";
 
-  updated() {
-    const button = this.renderRoot.querySelector("#button");
+  firstUpdated() {
+    //const button = this.shadowRoot.querySelector("slot");
+    const button = this.renderRoot.querySelector("#content");
+
     const tooltip = this.renderRoot.querySelector("#tooltip") as HTMLElement;
     const arrowElement = this.renderRoot.querySelector("#arrow") as HTMLElement;
 
@@ -112,7 +114,7 @@ export class SimpleGreeting extends LitElement {
   render() {
     return html`
       <div id="content">
-        <button id="button">I am fallback content</button>
+        <slot>I am fallback content</slot>
         <div>
           <div id="tooltip" role="tooltip">
             My tooltip
